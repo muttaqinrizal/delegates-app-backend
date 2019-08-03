@@ -1,39 +1,40 @@
-process.env.NODE_ENV = 'test'
+process.env.NODE_ENV = "test";
 
-const { readFileSync } = require("fs")
-let axios = require('axios')
-let mongoose = require('mongoose')
-let User = require('../models/User')
+const { readFileSync } = require("fs");
+let axios = require("axios");
+let mongoose = require("mongoose");
+let User = require("../models/User");
 
-let chai = require('chai')
-let chaiHttp = require('chai-http')
-let server = require('../app')
-let should = chai.should()
+let chai = require("chai");
+let chaiHttp = require("chai-http");
+let server = require("../app");
+let should = chai.should();
 
 // let token = process.env.TEST_TOKEN
-let token = ''
-var stamp = 'nurulirvan@gmail.com-31337'
+let token = "";
+var stamp = "nurulirvan@gmail.com-31337";
 
-chai.use(chaiHttp)
+chai.use(chaiHttp);
 
-before((done) => {
+before(done => {
   axios({
-    method: 'post',
-    url: 'http://localhost:3002/api/auth/login',
+    method: "post",
+    url: "http://localhost:3000/api/auth/login",
     data: {
-      email: 'nurulirvan@gmail.com',
-      password: 'SuperSecret'
+      email: "rizalm57@gmail.com",
+      password: "12345"
     }
-  }).then((response) => {
-    token = response.data.token
-    done()
-  }).catch((error) => {
-    console.error(error)
   })
-})
+    .then(response => {
+      token = response.data.token;
+      done();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+});
 
-describe('Subscription', () => {
-
+describe("Subscription", () => {
   // clear databse each testing
   // before((done) => {
   //   User.deleteMany({}).then(() => {
@@ -41,58 +42,62 @@ describe('Subscription', () => {
   //   })
   // })
 
-  describe('Get VAPID public key', () => {
-    it('should get VAPID public key', (done) => {
-      chai.request(server)
-      .get('/vapidPublicKey/')
-      .end((err, res) => {
-        res.should.have.status(200)
-        res.text.should.be.a('string')
-        res.text.should.be.equal(process.env.PUSH_PUBLIC);
-        done()
-      })
-    })
-  })
+  describe("Get VAPID public key", () => {
+    it("should get VAPID public key", done => {
+      chai
+        .request(server)
+        .get("/vapidPublicKey/")
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.text.should.be.a("string");
+          res.text.should.be.equal(process.env.PUSH_PUBLIC);
+          done();
+        });
+    });
+  });
 
-  describe('Subscribe', () => {
-    it('should create new subscription', (done) => {
-      chai.request(server)
-      .post('/api/subs/register')
-      .set('Authorization', 'Bearer ' + token)
-      .send({
-        stamp,
-        subscription: {
-          endpoint: 'test-0',
-          keys: {
-            auth: 'test-1',
-            p256dh: 'test-2'
+  describe("Subscribe", () => {
+    it("should create new subscription", done => {
+      chai
+        .request(server)
+        .post("/api/subs/register")
+        .set("Authorization", "Bearer " + token)
+        .send({
+          stamp,
+          subscription: {
+            endpoint: "test-0",
+            keys: {
+              auth: "test-1",
+              p256dh: "test-2"
+            }
           }
-        }
-      })
-      .end((err, res) => {
-        res.should.have.status(200)
-        res.body.should.be.an('object')
-        res.body.should.have.property('message').that.is.equal('registered')
-        done()
-      })
-    })
-  })
+        })
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.an("object");
+          res.body.should.have.property("message").that.is.equal("registered");
+          done();
+        });
+    });
+  });
 
-  describe('Unsubscribe', () => {
-    it('should remove a subscription', (done) => {
-      chai.request(server)
-        .post('/api/subs/unregister')
-        .set('Authorization', 'Bearer ' + token)
+  describe("Unsubscribe", () => {
+    it("should remove a subscription", done => {
+      chai
+        .request(server)
+        .post("/api/subs/unregister")
+        .set("Authorization", "Bearer " + token)
         .send({
           stamp
         })
         .end((err, res) => {
-          res.should.have.status(200)
-          res.body.should.be.an('object')
-          res.body.should.have.property('message').that.is.equal('unregistered')
-          done()
-        })
-    })
-  })
-
-})
+          res.should.have.status(200);
+          res.body.should.be.an("object");
+          res.body.should.have
+            .property("message")
+            .that.is.equal("unregistered");
+          done();
+        });
+    });
+  });
+});
