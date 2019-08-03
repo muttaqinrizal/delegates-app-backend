@@ -2,7 +2,7 @@ var webPush = require('web-push')
 var User = require('../models/User')
 
 webPush.setVapidDetails(
-  'https://serviceworke.rs/',
+  'mailto:rizalm57@gmail.com',
   process.env.PUSH_PUBLIC,
   process.env.PUSH_PRIVATE
 );
