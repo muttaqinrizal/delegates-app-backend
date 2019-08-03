@@ -2,7 +2,7 @@ var webPush = require('web-push')
 var User = require('../models/User')
 
 webPush.setVapidDetails(
-  'kajiankoding.netlify.com',
+  'https://serviceworke.rs/',
   process.env.PUSH_PUBLIC,
   process.env.PUSH_PRIVATE
 );
